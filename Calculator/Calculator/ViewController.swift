@@ -35,21 +35,37 @@ class ViewController: UIViewController {
         }
         
         switch operation {
-            case "×":
-                //we only want to multiply if we have enough operands in the array
-                if operandStack.count >= 2{
-                    displayValue = operandStack.removeLast() * operandStack.removeLast()
-                        enter() //gets the values of the operation automatically
-                }
-//            case "÷":
-//
-//            case "+":
-//
-//            case "−":
+            case "×":performOperation(operation: {$0 * $1})
             
-        default: break
+            case "÷":performOperation(operation: {$1 / $0})
+
+            case "+":performOperation(operation: {$0 + $1})
+
+            case "−":performOperation(operation: {$1 - $0})
+            
+            case "√":performOperation(operation: {sqrt($0)})
+            
+            default: break
         }
     }
+    
+    //function to perform our operations depending on the operation given
+    func performOperation(operation: (Double,Double)->Double){ //operation is a function that takes two doubles and returns a double
+        if operandStack.count >= 2{
+            displayValue = operation(operandStack.removeLast() , operandStack.removeLast())
+            enter() //gets the values of the operation automatically
+        }
+    }
+    
+    func performOperation(operation: (Double)->Double){ //operation is a function that takes two doubles and returns a double
+        if operandStack.count >= 1{
+            displayValue = operation(operandStack.removeLast())
+            enter() //gets the values of the operation automatically
+        }
+    }
+    
+    
+   
     
     var operandStack = Array<Double>() //stack to keep our numbers
     
