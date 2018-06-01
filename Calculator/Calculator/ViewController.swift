@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!
     var userIsInTheMiddleOfTyping: Bool = false
     
+    var brain = CalculatorBrain()
+    
     @IBAction func appendDigit(_ sender: UIButton) {
         let digit = sender.currentTitle!
         
@@ -33,46 +35,24 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTyping{
             enter()
         }
-        
-        switch operation {
-            case "×":performOperation(operation: {$0 * $1})
-            
-            case "÷":performOperation(operation: {$1 / $0})
-
-            case "+":performOperation(operation: {$0 + $1})
-
-            case "−":performOperation(operation: {$1 - $0})
-            
-            case "√":performOperation(operation: {sqrt($0)})
-            
-            default: break
+        if let operation = sender.currentTitle {
+            if let result: Double = brain.performOperation(symbol: operation) {
+                displayValue = result
+            }
+            else{
+                displayValue = 0
+            }
         }
     }
     
-    //function to perform our operations depending on the operation given
-    func performOperation(operation: (Double,Double)->Double){ //operation is a function that takes two doubles and returns a double
-        if operandStack.count >= 2{
-            displayValue = operation(operandStack.removeLast() , operandStack.removeLast())
-            enter() //gets the values of the operation automatically
-        }
-    }
-    
-    func performOperation(operation: (Double)->Double){ //operation is a function that takes two doubles and returns a double
-        if operandStack.count >= 1{
-            displayValue = operation(operandStack.removeLast())
-            enter() //gets the values of the operation automatically
-        }
-    }
-    
-    
-   
-    
-    var operandStack = Array<Double>() //stack to keep our numbers
     
     @IBAction func enter() {
         userIsInTheMiddleOfTyping = false
-        operandStack.append(displayValue)
-        print("operand Stack = \(operandStack)")
+        if let result:  Double = brain.PushOperand(operand: displayValue) {
+            displayValue = result
+        }else{
+            displayValue = 0
+        }
     }
     
     //getting the value of the operand
